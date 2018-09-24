@@ -88,7 +88,19 @@ private void startE2ETest(def testName) {
 }
 
 private void waitForTest(def testName){
-    openshift.selector("po/"+testName).rollout().status("--watch=true")
+    openshift.selector("po/"+testName).watch {
+        if ( it.count() == 0 ) return false
+
+        def allDone = true
+        it.withEach {
+            def podModel = it.object()
+            if ( podModel.status.phase != "Completed" ) {
+                allDone = false
+            }
+        }
+
+        return allDone
+    }
 }
 
 private static void waitForTestBuild(Object build){
