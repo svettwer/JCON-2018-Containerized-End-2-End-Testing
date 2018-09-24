@@ -26,10 +26,10 @@ node{
     openshift.withProject( "todo-app-int" ) {
 
         stage('build-e2e-test-containers'){
-            Object checkLayoutBuild = startE2ETestBuild('check-layout','e2e/layout')
-            Object checkLifeCycle = startE2ETestBuild('check-life-cycle','e2e/lifeCycle')
-            waitForTestBuild(checkLayoutBuild)
-            waitForTestBuild(checkLifeCycle)
+            def checkLayoutBuild = startE2ETestBuild('check-layout','e2e/layout')
+            def checkLifeCycle = startE2ETestBuild('check-life-cycle','e2e/lifeCycle')
+            waitFor(checkLayoutBuild)
+            waitFor(checkLifeCycle)
         }
 
         stage('deploy-to-int'){
@@ -46,8 +46,8 @@ node{
             deletePod('check-life-cycle')
             startE2ETest('check-layout')
             startE2ETest('check-life-cycle')
-            waitForTest('check-layout')
-            waitForTest('check-life-cycle')
+            waitFor(openshift.selector('po/check-layout'))
+            waitFor(openshift.selector('po/check-life-cycle'))
         }
 
         stage('pre-production'){
@@ -97,34 +97,14 @@ private void deletePod(def podName){
     }
 }
 
-private void waitForTest(def testName){
-    openshift.selector("po/"+testName).watch {
+private static void waitFor(def selector){
+    selector.watch {
         if ( it.count() == 0 ) return false
 
         def allDone = true
         it.withEach {
             def podModel = it.object()
             if ( podModel.status.phase != "Complete" ) {
-                allDone = false
-            }
-        }
-
-        return allDone
-    }
-}
-
-private static void waitForTestBuild(Object build){
-    build.watch {
-        if ( it.count() == 0 ) return false
-
-        // A robust script should not assume that only one build has been created, so
-        // we will need to iterate through all builds.
-        def allDone = true
-        it.withEach {
-            // 'it' is now bound to a Selector selecting a single object for this iteration.
-            // Let's model it in Groovy to check its status.
-            def buildModel = it.object()
-            if ( buildModel.status.phase != "Complete" ) {
                 allDone = false
             }
         }
