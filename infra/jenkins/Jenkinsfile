@@ -104,7 +104,7 @@ private void waitForTest(def testName){
         def allDone = true
         it.withEach {
             def podModel = it.object()
-            if ( podModel.status.phase != "Completed" ) {
+            if ( podModel.status.phase != "Complete" ) {
                 allDone = false
             }
         }
