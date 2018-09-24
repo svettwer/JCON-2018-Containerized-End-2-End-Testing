@@ -42,6 +42,8 @@ node{
         }
 
         stage('run-e2e-tests'){
+            deletePod('check-layout')
+            deletePod('check-life-cycle')
             startE2ETest('check-layout')
             startE2ETest('check-life-cycle')
             waitForTest('check-layout')
@@ -85,6 +87,14 @@ private void startE2ETest(def testName) {
             "--image=172.30.1.1:5000/todo-app-int/"+ testName + ":latest",
             "--restart=Never",
             "-l application="+testName)
+}
+
+
+private void deletePod(def podName){
+    def pod = openshift.selector("po/"+podName)
+    if(pod.exists()){
+        pod.delete()
+    }
 }
 
 private void waitForTest(def testName){
