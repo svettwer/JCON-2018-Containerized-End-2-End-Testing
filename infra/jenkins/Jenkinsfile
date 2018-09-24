@@ -83,7 +83,6 @@ private Object startE2ETestBuild(def buildName, def contextDir) {
 private void startE2ETest(def testName) {
     openshift.run(testName,
             "--image=172.30.1.1:5000/todo-app-int/"+ testName + ":latest",
-            "--rm",
             "--restart=Never",
             "-l application="+testName)
 }
@@ -103,7 +102,7 @@ private static void waitForTestBuild(Object build){
             // 'it' is now bound to a Selector selecting a single object for this iteration.
             // Let's model it in Groovy to check its status.
             def buildModel = it.object()
-            if ( it.object().status.phase != "Complete" ) {
+            if ( buildModel.status.phase != "Complete" ) {
                 allDone = false
             }
         }
