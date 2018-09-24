@@ -28,6 +28,13 @@ podTemplate(cloud: "openshift", namespace: "todo-app-int") {
 
         stage('e2e-tests'){
             openshift.withProject( "todo-app-int" ) {
+                def deploymentTemplate = openshift.process("-f infra/yml/todo-app-deployment-template.yml",
+                        "-p", "URL=todo-app-int.192.168.99.101.nip.io")
+                openshift.apply(deploymentTemplate)
+
+                openshift.selector("dc/todo-app").rollout().latest()
+                openshift.selector("dc/todo-app").rollout().status("--watch=true")
+
                 def buildTemplate = openshift.process("-f infra/yml/s2i-sakuli-build-template.yml",
                         "-p", "TESTSUITE_REPOSITORY_URL=http://gogs.192.168.99.101.nip.io/sven/todo-app.git",
                         "-p", "TESTSUITE_CONTEXT_DIR=e2e/testsuite")
