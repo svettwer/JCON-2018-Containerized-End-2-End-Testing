@@ -26,7 +26,7 @@ node{
     openshift.withProject( "todo-app-int" ) {
 
         stage('build-e2e-test-containers'){
-            buildE2EContainer('check-layout','e2e/laylout')
+            buildE2EContainer('check-layout','e2e/layout')
             buildE2EContainer('check-life-cycle','e2e/lifeCycle')
         }
 
