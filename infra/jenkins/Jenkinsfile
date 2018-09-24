@@ -26,8 +26,8 @@ node{
     openshift.withProject( "todo-app-int" ) {
 
         stage('build-e2e-test-containers'){
-            StaticSelector checkLayoutBuild = startE2ETestBuild('check-layout','e2e/layout')
-            StaticSelector checkLifeCycle = startE2ETestBuild('check-life-cycle','e2e/lifeCycle')
+            Object checkLayoutBuild = startE2ETestBuild('check-layout','e2e/layout')
+            Object checkLifeCycle = startE2ETestBuild('check-life-cycle','e2e/lifeCycle')
             waitForTestBuild(checkLayoutBuild)
             waitForTestBuild(checkLifeCycle)
         }
@@ -71,7 +71,7 @@ stage('prod') {
 }
 
 
-private StaticSelector startE2ETestBuild(def buildName, def contextDir) {
+private Object startE2ETestBuild(def buildName, def contextDir) {
     def buildTemplate = openshift.process("-f infra/yml/s2i-sakuli-build-template.yml",
             "-p", "IMAGE=" + buildName,
             "-p", "TESTSUITE_REPOSITORY_URL=http://gogs.192.168.99.101.nip.io/sven/todo-app.git",
@@ -92,7 +92,7 @@ private void waitForTest(def testName){
     openshift.selector("po/"+testName).rollout().status("--watch=true")
 }
 
-private static void waitForTestBuild(StaticSelector build){
+private static void waitForTestBuild(Object build){
     build.watch {
         if ( it.count() == 0 ) return false
 
