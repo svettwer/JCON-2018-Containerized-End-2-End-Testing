@@ -26,10 +26,10 @@ node{
     openshift.withProject( "todo-app-int" ) {
 
         stage('build-e2e-test-containers'){
-            startE2ETestBuild('check-layout','e2e/layout')
-            startE2ETestBuild('check-life-cycle','e2e/lifeCycle')
-            waitForTestBuild('checkLayout')
-            waitForTestBuild('checkLifeCycle')
+            StaticSelector checkLayoutBuild = startE2ETestBuild('check-layout','e2e/layout')
+            StaticSelector checkLifeCycle = startE2ETestBuild('check-life-cycle','e2e/lifeCycle')
+            waitForTestBuild(checkLayoutBuild)
+            waitForTestBuild(checkLifeCycle)
         }
 
         stage('deploy-to-int'){
@@ -71,13 +71,13 @@ stage('prod') {
 }
 
 
-private void startE2ETestBuild(def buildName, def contextDir) {
+private StaticSelector startE2ETestBuild(def buildName, def contextDir) {
     def buildTemplate = openshift.process("-f infra/yml/s2i-sakuli-build-template.yml",
             "-p", "IMAGE=" + buildName,
             "-p", "TESTSUITE_REPOSITORY_URL=http://gogs.192.168.99.101.nip.io/sven/todo-app.git",
             "-p", "TESTSUITE_CONTEXT_DIR="+ contextDir)
     openshift.apply(buildTemplate)
-    openshift.startBuild(buildName)
+    return openshift.startBuild(buildName)
 }
 
 private void startE2ETest(def testName) {
@@ -92,6 +92,22 @@ private void waitForTest(def testName){
     openshift.selector("po/"+testName).rollout().status("--watch=true")
 }
 
-private void waitForTestBuild(def buildName){
-    openshift.openshiftVerifyBuild bldCfg: buildName, waitTime: 30000
+private static void waitForTestBuild(StaticSelector build){
+    build.watch {
+        if ( it.count() == 0 ) return false
+
+        // A robust script should not assume that only one build has been created, so
+        // we will need to iterate through all builds.
+        def allDone = true
+        it.withEach {
+            // 'it' is now bound to a Selector selecting a single object for this iteration.
+            // Let's model it in Groovy to check its status.
+            def buildModel = it.object()
+            if ( it.object().status.phase != "Complete" ) {
+                allDone = false
+            }
+        }
+
+        return allDone
+    }
 }
