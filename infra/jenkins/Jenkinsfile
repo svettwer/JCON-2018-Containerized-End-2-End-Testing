@@ -26,8 +26,8 @@ node{
     openshift.withProject( "todo-app-int" ) {
 
         stage('build-e2e-test-containers'){
-            buildE2EContainer('checkLayout','e2e/laylout')
-            buildE2EContainer('checkLifeCycle','e2e/lifeCycle')
+            buildE2EContainer('check-layout','e2e/laylout')
+            buildE2EContainer('check-life-cycle','e2e/lifeCycle')
         }
 
         stage('deploy-to-int'){
@@ -40,10 +40,10 @@ node{
         }
 
         stage('run-e2e-tests'){
-            startE2ETest('checkLayout')
-            startE2ETest('checkLifeCycle')
-            waitForTest('checkLayout')
-            waitForTest('checkLifeCycle')
+            startE2ETest('check-layout')
+            startE2ETest('check-life-cycle')
+            waitForTest('check-layout')
+            waitForTest('check-life-cycle')
         }
 
         stage('pre-production'){
