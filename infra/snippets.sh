@@ -1,16 +1,18 @@
 #!/bin/bash
 
-oc run checkLayout \
-    --image=172.30.1.1:5000/todo-app-int/checkLayout:latest \
+oc run check-layout \
+    --image=172.30.1.1:5000/todo-app-int/check-layout:latest \
     --attach=true \
     --rm \
     --restart=Never \
-    -l application=checkLayout
+    -l application=check-layout \
+    -n todo-app-int
 
 
-oc run checkLifeCycle \
-    --image=172.30.1.1:5000/todo-app-int/checkLifeCycle:latest \
+oc run check-life-cycle \
+    --image=172.30.1.1:5000/todo-app-int/check-life-cycle:latest \
     --attach=true \
     --rm \
     --restart=Never \
-    -l application=checkLifeCycle
+    -l application=check-life-cycle \
+    -n todo-app-int
