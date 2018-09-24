@@ -21,45 +21,40 @@ stage('dev') {
 }
 
 
+node{
+    checkout scm
+    openshift.withProject( "todo-app-int" ) {
 
-podTemplate(cloud: "openshift", namespace: "todo-app-int") {
-    node('maven'){
-        checkout scm
+        stage('build-e2e-test-containers'){
+            buildE2EContainer('checkLayout','e2e/laylout')
+            buildE2EContainer('checkLifeCycle','e2e/lifeCycle')
+        }
 
-        stage('e2e-tests'){
-            openshift.withProject( "todo-app-int" ) {
-                def deploymentTemplate = openshift.process("-f infra/yml/todo-app-deployment-template.yml",
-                        "-p", "URL=todo-app-int.192.168.99.101.nip.io")
-                openshift.apply(deploymentTemplate)
+        stage('deploy-to-int'){
+            def deploymentTemplate = openshift.process("-f infra/yml/todo-app-deployment-template.yml",
+                    "-p", "URL=todo-app-int.192.168.99.101.nip.io")
+            openshift.apply(deploymentTemplate)
 
-                openshift.selector("dc/todo-app").rollout().latest()
-                openshift.selector("dc/todo-app").rollout().status("--watch=true")
+            openshift.selector("dc/todo-app").rollout().latest()
+            openshift.selector("dc/todo-app").rollout().status("--watch=true")
+        }
 
-                def buildTemplate = openshift.process("-f infra/yml/s2i-sakuli-build-template.yml",
-                        "-p", "TESTSUITE_REPOSITORY_URL=http://gogs.192.168.99.101.nip.io/sven/todo-app.git",
-                        "-p", "TESTSUITE_CONTEXT_DIR=e2e/testsuite")
-                openshift.apply(buildTemplate)
-
-                openshift.startBuild("sakuli-s2i-testsuite", "--wait=true")
-
-                openshift.run("sakuli-s2i-testsuite",
-                        "--image=172.30.1.1:5000/todo-app-int/sakuli-s2i-testsuite:latest",
-                        "--attach=true",
-                        "--rm",
-                        "--restart=Never",
-                        "-l application=sakuli-s2i-testsuite")
-            }
+        stage('run-e2e-tests'){
+            startE2ETest('checkLayout')
+            startE2ETest('checkLifeCycle')
+            waitForTest('checkLayout')
+            waitForTest('checkLifeCycle')
         }
 
         stage('pre-production'){
             input "Deploy to production?"
 
-            openshift.withProject( "todo-app-int" ) {
-                openshift.tag("todo-app-int/todo-app:latest todo-app-prod/todo-app:latest")
-            }
+            openshift.tag("todo-app-int/todo-app:latest todo-app-prod/todo-app:latest")
         }
     }
 }
+
+
 
 stage('prod') {
     node{
@@ -73,3 +68,25 @@ stage('prod') {
     }
 }
 
+
+private void buildE2EContainer(def buildName, def contextDir) {
+    def buildTemplate = openshift.process("-f infra/yml/s2i-sakuli-build-template.yml",
+            "-p", "IMAGE=" + buildName,
+            "-p", "TESTSUITE_REPOSITORY_URL=http://gogs.192.168.99.101.nip.io/sven/todo-app.git",
+            "-p", "TESTSUITE_CONTEXT_DIR="+ contextDir)
+    openshift.apply(buildTemplate)
+    openshift.startBuild(buildName, "--wait=true")
+}
+
+private void startE2ETest(def testName) {
+    openshift.run(testName,
+            "--image=172.30.1.1:5000/todo-app-int/"+ testName + ":latest",
+            "--attach=true",
+            "--rm",
+            "--restart=Never",
+            "-l application="+testName)
+}
+
+private void waitForTest(def testName){
+
+}
