@@ -138,7 +138,7 @@ objects:
       application: ${IMAGE}
     name: ${IMAGE}
   spec:
-    host: sakuli-test.192.168.99.101.nip.io
+    host: ${IMAGE}.192.168.99.101.nip.io
     to:
       name: ${IMAGE}
     port:
