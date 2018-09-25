@@ -103,8 +103,8 @@ private static void waitFor(def selector){
 
         def allDone = true
         it.withEach {
-            def podModel = it.object()
-            if ( podModel.status.phase != "Complete" ) {
+            def model = it.object()
+            if ( model.status.phase != "Complete" && model.status.phase != "Completed" ) {
                 allDone = false
             }
         }
