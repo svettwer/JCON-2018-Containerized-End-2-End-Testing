@@ -28,8 +28,8 @@ node{
         stage('build-e2e-test-containers'){
             def checkLayoutBuild = startE2ETestBuild('check-layout','e2e/layout')
             def checkLifeCycle = startE2ETestBuild('check-life-cycle','e2e/lifeCycle')
-            waitFor(checkLayoutBuild)
-            waitFor(checkLifeCycle)
+            waitForBuild(checkLayoutBuild)
+            waitForBuild(checkLifeCycle)
         }
 
         stage('deploy-to-int'){
@@ -46,8 +46,8 @@ node{
             deletePod('check-life-cycle')
             startE2ETest('check-layout')
             startE2ETest('check-life-cycle')
-            waitFor(openshift.selector('po/check-layout'))
-            waitFor(openshift.selector('po/check-life-cycle'))
+            waitForTest(openshift.selector('po/check-layout'))
+            waitForTest(openshift.selector('po/check-life-cycle'))
         }
 
         stage('pre-production'){
@@ -97,14 +97,28 @@ private void deletePod(def podName){
     }
 }
 
-private static void waitFor(def selector){
+private static void waitForBuild(def selector){
     selector.watch {
         if ( it.count() == 0 ) return false
 
         def allDone = true
         it.withEach {
             def model = it.object()
-            if ( model.status.phase != "Complete" && model.status.phase != "Completed" ) {
+            if ( model.status.phase != "Complete") {
+                allDone = false
+            }
+        }
+
+        return allDone
+    }
+}
+
+private static void waitForTest(def selector){
+    selector.watch {
+        def allDone = true
+        it.withEach {
+            def model = it.object()
+            if ( model.status.phase != "Completed" ) {
                 allDone = false
             }
         }
