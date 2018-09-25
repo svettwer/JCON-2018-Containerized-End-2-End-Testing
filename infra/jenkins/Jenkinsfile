@@ -46,8 +46,8 @@ node{
             deletePod('check-life-cycle')
             startE2ETest('check-layout')
             startE2ETest('check-life-cycle')
-            waitFor(openshift.selector('po/check-layout'))
-            waitFor(openshift.selector('po/check-life-cycle'))
+            waitFor(openshift.selector('po/check-layout').object())
+            waitFor(openshift.selector('po/check-life-cycle').object())
         }
 
         stage('pre-production'){
