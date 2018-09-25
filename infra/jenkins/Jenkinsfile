@@ -104,6 +104,7 @@ private static void waitFor(def selector){
         def allDone = true
         it.withEach {
             def model = it.object()
+            echo "${model.status.phase}"
             if ( model.status.phase != "Complete" && model.status.phase != "Completed" ) {
                 allDone = false
             }
