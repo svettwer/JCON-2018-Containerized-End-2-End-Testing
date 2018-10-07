@@ -50,4 +50,4 @@ parameters:
   displayName: Repository url
   description: The URL of the source repository
   required: true
-  value: https://github.com/svettwer/JCON-2018-Containerized-End-2-End-Testing
+  value: https://github.com/svettwer/JCON-2018-Containerized-End-2-End-Testing.git
