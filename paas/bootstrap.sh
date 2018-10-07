@@ -28,3 +28,11 @@ oc new-app -f http://bit.ly/openshift-gogs-template --param=HOSTNAME=gogs.$(mini
 oc project openshift
 oc process -f $(git rev-parse --show-toplevel)/paas/yml/s2i_spring_offline_build_template.yml | oc apply -f -
 oc start-build -w spring-offline-s2i
+
+#Add a customized sakuli s2i image
+oc process -f $(git rev-parse --show-toplevel)/paas/yml/s2i_sakuli_build_template.yml \
+           -p SOURCE_REPOSITORY_URL=https://github.com/svettwer/JCON-2018-Containerized-End-2-End-Testing.git \
+           -p SOURCE_DOCKER_CONTEXT_DIR=paas/docker \
+           -p SOURCE_DOCKERFILE=sakuli_s2i_dockerfile \
+           -p BASE_IMAGE=consol/sakuli-centos-xfce:v1.1.0 | oc apply -f -
+oc start-build -w sakuli-s2i
