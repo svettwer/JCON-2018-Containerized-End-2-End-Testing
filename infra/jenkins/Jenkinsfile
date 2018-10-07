@@ -3,23 +3,13 @@ stage('dev') {
         checkout scm
 
         openshift.withProject( "todo-app-dev" ) {
-            def buildTemplate = openshift.process("-f infra/yml/s2i-todo-app-build-template.yml")
-            openshift.apply(buildTemplate)
-
-            openshift.startBuild("todo-app", "--wait=true")
-
-            def deploymentTemplate = openshift.process("-f infra/yml/todo-app-deployment-template.yml",
-                    "-p", "URL=todo-app-dev.192.168.99.101.nip.io")
-            openshift.apply(deploymentTemplate)
-
-            openshift.selector("dc/todo-app").rollout().latest()
-            openshift.selector("dc/todo-app").rollout().status("--watch=true")
+            buildTodoApp()
+            deployTodoApp("todo-app-dev.192.168.99.101.nip.io")
 
             openshift.tag("todo-app-dev/todo-app:latest todo-app-int/todo-app:latest")
         }
     }
 }
-
 
 node{
     checkout scm
@@ -33,12 +23,7 @@ node{
         }
 
         stage('deploy-to-int'){
-            def deploymentTemplate = openshift.process("-f infra/yml/todo-app-deployment-template.yml",
-                    "-p", "URL=todo-app-int.192.168.99.101.nip.io")
-            openshift.apply(deploymentTemplate)
-
-            openshift.selector("dc/todo-app").rollout().latest()
-            openshift.selector("dc/todo-app").rollout().status("--watch=true")
+            deployTodoApp("todo-app-int.192.168.99.101.nip.io")
         }
 
         stage('run-e2e-tests'){
@@ -58,18 +43,28 @@ node{
     }
 }
 
-
-
 stage('prod') {
     node{
         openshift.withProject( "todo-app-prod" ) {
-            def deploymentTemplate = openshift.process("-f infra/yml/todo-app-deployment-template.yml")
-            openshift.apply(deploymentTemplate)
-
-            openshift.selector("dc/todo-app").rollout().latest()
-            openshift.selector("dc/todo-app").rollout().status("--watch=true")
+            deployTodoApp("todo-app-prod.192.168.99.101.nip.io")
         }
     }
+}
+
+private void buildTodoApp() {
+    def buildTemplate = openshift.process("-f infra/yml/s2i-todo-app-build-template.yml")
+    openshift.apply(buildTemplate)
+
+    openshift.startBuild("todo-app", "--wait=true")
+}
+
+private void deployTodoApp(String routeUrl) {
+    def deploymentTemplate = openshift.process("-f infra/yml/todo-app-deployment-template.yml",
+            "-p", "URL=" + routeUrl)
+    openshift.apply(deploymentTemplate)
+
+    openshift.selector("dc/todo-app").rollout().latest()
+    openshift.selector("dc/todo-app").rollout().status("--watch=true")
 }
 
 
