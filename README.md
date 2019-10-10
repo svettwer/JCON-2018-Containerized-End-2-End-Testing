@@ -19,4 +19,4 @@ it may be required to change the repository references in the *infra* configurat
 depending on the user name you've chosen for your gogs installation.
 In addition, it may be required to change the ip addresses in the configuration files
 depending the ip address that has been assigned to your cluster. I recommend a search and
-replace for `192.168.99.101` to the ip delivered by the command `minishift ip`
+replace for `192.168.99.108` to the ip delivered by the command `minishift ip`
