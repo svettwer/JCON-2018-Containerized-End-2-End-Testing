@@ -1,6 +1,5 @@
-# JCON 2018 - Containerized End-2-End-Testing
+# Containerized End-2-End-Testing
 This repository contains all sources of my Talk *Containerized End-2-End-Testing*
-on the JCON 2018.
 
 ## Repository structure
 
