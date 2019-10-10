@@ -30,9 +30,6 @@ parameters:
   - description: Source folder where the test suite is located.
     name: TESTSUITE_CONTEXT_DIR
 
-  - description: Secret to access the testsuite repository.
-    name: TESTSUITE_REPOSITORY_SECRET
-
   - description: Name of the builder image.
     name: BUILDER_IMAGE
     required: true
@@ -68,8 +65,6 @@ objects:
           ref: ${TESTSUITE_REPOSITORY_REF}
           uri: ${TESTSUITE_REPOSITORY_URL}
         contextDir: ${TESTSUITE_CONTEXT_DIR}
-        sourceSecret:
-          name: ${TESTSUITE_REPOSITORY_SECRET}
       strategy:
         type: Source
         sourceStrategy:
