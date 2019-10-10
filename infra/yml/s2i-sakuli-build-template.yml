@@ -82,7 +82,10 @@ objects:
             name: ${BUILDER_IMAGE}:${BUILDER_IMAGE_TAG}
           env:
             - name: "SAKULI_LICENSE_KEY"
-              value: ${SAKULI_LICENSE_KEY}
+              valueFrom:
+                secretKeyRef:
+                  name: sakuli-licence
+                  key: licence
       triggers:
         - imageChange: {}
           type: ImageChange
