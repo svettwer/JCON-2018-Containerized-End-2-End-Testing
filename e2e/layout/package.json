@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "sakuli run ."
+    "test": "../node_modules/.bin/sakuli run ."
   },
   "author": "",
   "license": "ISC",
