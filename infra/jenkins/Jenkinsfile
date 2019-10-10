@@ -1,65 +1,70 @@
 stage('dev') {
     node{
         checkout scm
+        openshift.withCluster() {
+            openshift.withProject( "todo-app-dev" ) {
+                buildTodoApp()
+                deployTodoApp("todo-app-dev.192.168.99.108.nip.io")
 
-        openshift.withProject( "todo-app-dev" ) {
-            buildTodoApp()
-            deployTodoApp("todo-app-dev.192.168.99.108.nip.io")
-
-            openshift.tag("todo-app-dev/todo-app:latest todo-app-int/todo-app:latest")
+                openshift.tag("todo-app-dev/todo-app:latest todo-app-int/todo-app:latest")
+            }
         }
     }
 }
 
 node{
     checkout scm
-    openshift.withProject( "todo-app-int" ) {
+    openshift.withCluster() {
+        openshift.withProject( "todo-app-int" ) {
 
-        stage('build-e2e-test-containers'){
-            def checkLayoutBuild = startE2ETestBuild('check-layout','e2e/layout')
-            def checkLifeCycle = startE2ETestBuild('check-life-cycle','e2e/lifeCycle')
-            waitForBuild(checkLayoutBuild)
-            waitForBuild(checkLifeCycle)
-        }
+            stage('build-e2e-test-containers'){
+                def checkLayoutBuild = startE2ETestBuild('check-layout','e2e/layout')
+                def checkLifeCycle = startE2ETestBuild('check-life-cycle','e2e/lifeCycle')
+                waitForBuild(checkLayoutBuild)
+                waitForBuild(checkLifeCycle)
+            }
 
-        stage('deploy-to-int'){
-            deployTodoApp("todo-app-int.192.168.99.108.nip.io")
-        }
+            stage('deploy-to-int'){
+                deployTodoApp("todo-app-int.192.168.99.108.nip.io")
+            }
 
-        stage('run-e2e-tests'){
-            deletePod('check-layout')
-            deletePod('check-life-cycle')
-            startE2ETest('check-layout')
-            startE2ETest('check-life-cycle')
-            waitForTest(openshift.selector('po/check-layout'))
-            waitForTest(openshift.selector('po/check-life-cycle'))
-        }
+            stage('run-e2e-tests'){
+                deletePod('check-layout')
+                deletePod('check-life-cycle')
+                startE2ETest('check-layout')
+                startE2ETest('check-life-cycle')
+                waitForTest(openshift.selector('po/check-layout'))
+                waitForTest(openshift.selector('po/check-life-cycle'))
+            }
 
-        stage('pre-production'){
-            input "Deploy to production?"
+            stage('pre-production'){
+                input "Deploy to production?"
 
-            openshift.tag("todo-app-int/todo-app:latest todo-app-prod/todo-app:latest")
+                openshift.tag("todo-app-int/todo-app:latest todo-app-prod/todo-app:latest")
+            }
         }
     }
 }
 
 stage('prod') {
     node{
-        openshift.withProject( "todo-app-prod" ) {
-            deployTodoApp("todo-app-prod.192.168.99.108.nip.io")
+        openshift.withCluster() {
+            openshift.withProject( "todo-app-prod" ) {
+                deployTodoApp("todo-app-prod.192.168.99.108.nip.io")
+            }
         }
     }
 }
 
 private void buildTodoApp() {
-    def buildTemplate = openshift.process("-f infra/yml/s2i-todo-app-build-template.yml")
+    def buildTemplate = openshift.process("-f", "infra/yml/s2i-todo-app-build-template.yml")
     openshift.apply(buildTemplate)
 
     openshift.startBuild("todo-app", "--wait=true")
 }
 
 private void deployTodoApp(String routeUrl) {
-    def deploymentTemplate = openshift.process("-f infra/yml/todo-app-deployment-template.yml",
+    def deploymentTemplate = openshift.process("-f", "infra/yml/todo-app-deployment-template.yml",
             "-p", "URL=" + routeUrl)
     openshift.apply(deploymentTemplate)
 
@@ -69,7 +74,7 @@ private void deployTodoApp(String routeUrl) {
 
 
 private Object startE2ETestBuild(def buildName, def contextDir) {
-    def buildTemplate = openshift.process("-f infra/yml/s2i-sakuli-build-template.yml",
+    def buildTemplate = openshift.process("-f", "infra/yml/s2i-sakuli-build-template.yml",
             "-p", "IMAGE=" + buildName,
             "-p", "TESTSUITE_REPOSITORY_URL=http://gogs.192.168.99.108.nip.io/sven/todo-app.git",
             "-p", "TESTSUITE_CONTEXT_DIR="+ contextDir)
