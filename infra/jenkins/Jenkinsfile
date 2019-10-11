@@ -33,8 +33,8 @@ node{
                 deletePod('check-life-cycle')
                 startE2ETest('check-layout')
                 startE2ETest('check-life-cycle')
-                waitForTest(openshift.selector('po/check-layout'))
-                waitForTest(openshift.selector('po/check-life-cycle'))
+                waitForTest(openshift.selector('po','check-layout'))
+                waitForTest(openshift.selector('po','check-life-cycle'))
             }
 
             stage('pre-production'){
@@ -97,12 +97,17 @@ private void deletePod(def podName){
 
 private static void waitForBuild(def selector){
     selector.untilEach(1) {
-        return (it.object().status.phase != "Complete")
+        return (it.object().status.phase == "Complete")
     }
 }
 
 private static void waitForTest(def selector){
     selector.untilEach(1) {
-        return (it.object().status.phase == "Running")
+        return (it.object().status.phase == "Succeeded" || it.object().status.phase == "Failed")
+    }
+    selector.withEach() {
+        if(it.object().status.phase != "Succeeded"){
+            throw new Exception("E2E test '" + it.name() + "' failed.")
+        }
     }
 }
