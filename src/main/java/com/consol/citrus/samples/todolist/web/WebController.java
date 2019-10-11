@@ -30,20 +30,20 @@ public class WebController {
     @Autowired
     private TodoListService todoListService;
 
-    @RequestMapping(value = "/todolist", method = RequestMethod.GET)
+    @GetMapping(value = "/todolist")
     public String listHtml(Model model) {
         model.addAttribute("todos", todoListService.getAllEntries());
         return "todo";
     }
 
-    @RequestMapping(value = "/todolist", method = RequestMethod.POST, headers = "content-type=application/x-www-form-urlencoded")
+    @PostMapping(value = "/todolist", headers = "content-type=application/x-www-form-urlencoded")
     public String addFormUrlencoded(@RequestParam(value = "title") String title,
                                     @RequestParam(value = "description", defaultValue = "N/A") String description) {
         todoListService.addEntry(new TodoEntry(title, description));
         return "redirect:todolist";
     }
 
-    @RequestMapping(value = "/todolist", method = RequestMethod.DELETE)
+    @DeleteMapping(value = "/todolist")
     public String clear() {
         todoListService.clear();
         return "redirect:todolist";
