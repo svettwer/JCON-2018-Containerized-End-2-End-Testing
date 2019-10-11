@@ -16,11 +16,9 @@
 
 package com.consol.citrus.samples.todolist;
 
-import com.consol.citrus.samples.todolist.dao.JdbcConfigurationProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -35,7 +33,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  */
 @SpringBootApplication
 @EnableSwagger2
-@EnableConfigurationProperties(JdbcConfigurationProperties.class)
 public class TodoApplication extends SpringBootServletInitializer {
 
     @Override
