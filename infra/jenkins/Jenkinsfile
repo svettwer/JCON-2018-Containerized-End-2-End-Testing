@@ -96,33 +96,13 @@ private void deletePod(def podName){
 }
 
 private static void waitForBuild(def selector){
-    selector.watch {
-        if ( it.count() == 0 ) return false
-
-        def allDone = true
-        it.withEach {
-            def model = it.object()
-            if ( model.status.phase != "Complete") {
-                allDone = false
-            }
-        }
-
-        return allDone
+    selector.untilEach(1) {
+        return (it.object().status.phase != "Complete")
     }
 }
 
 private static void waitForTest(def selector){
-    selector.watch {
-        if ( it.count() == 0 ) return false
-
-        def allDone = true
-        it.withEach {
-            def model = it.object()
-            if ( model.status.phase == "Running") {
-                allDone = false
-            }
-        }
-
-        return allDone
+    selector.untilEach(1) {
+        return (it.object().status.phase == "Running")
     }
 }

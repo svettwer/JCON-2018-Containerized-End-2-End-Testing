@@ -4,45 +4,52 @@
     var screen = new Region();
 
     var pdfFilePath = "~/todo-backup.pdf";
-    try {
 
+    const clickImage = async function (imageName) {
+        const image = await screen.find(imageName);
+        await image.click();
+        await _wait(1000);
+    };
+
+    try {
+        await _navigateTo("http://todo-app-int.192.168.99.110.nip.io/todolist");
         // Add entry
-        await _highlight(_textbox("title"));
+        await _highlight(_textbox("title"), 100);
         await _click(_textbox("title"));
         await _setValue(_textbox("title"), "Sample todo");
 
-        await _highlight(_textarea("description"));
+        await _highlight(_textarea("description"), 100);
         await _click(_textarea("description"));
         await _setValue(_textarea("description"), "Sample todo description");
 
-        await _highlight(_submit("Add"));
+        await _highlight(_submit("Add"), 100);
         await _click(_submit("Add"));
         await testCase.endOfStep("Add todo entry", 30);
 
-        //load images
-        await testCase.addImagePaths("centos_chrome");
-
         //open print preview
         await env.type("p", Key.CTRL);
+        await env.sleep(2);
 
         //save as pdf
-        await screen.find("save_button").highlight().click();
-        await env.sleep(1);
-        await env.type("a", Key.CTRL) //mark filename in "save under" dialog
-            .type(pdfFilePath + Key.ENTER) //type filename and press ENTER
-            .sleep(1);
+        await clickImage("testTodoLifecycle/ubuntu_chrome/save_button.png");
+        await env.type("a", Key.CTRL);
+        await env.paste(pdfFilePath);
+        await env.type(Key.ENTER);
+        await env.sleep(2);
         await testCase.endOfStep("Create backup of todo entry", 30);
 
         //Complete entry
-        await _highlight(_listItem("Sample todox"));
-        await _highlight(_checkbox("complete"));
+        await _highlight(_checkbox("complete"), 100);
         await _click(_checkbox("complete"));
+        await env.sleep(1);
         await testCase.endOfStep("Complete todo entry", 30);
 
         //Delete entry
-        await _highlight(_span("x"));
+        await _highlight(_span("x"), 100);
         await _click(_span("x"));
+        await env.sleep(1);
         await testCase.endOfStep("Delete todo entry", 30);
+
 
     } catch (e) {
         testCase.handleException(e);
