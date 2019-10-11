@@ -37,7 +37,9 @@ node{
                 waitForTest(openshift.selector('po/check-life-cycle'))
             }
 
-            openshift.tag("todo-app-int/todo-app:latest todo-app-prod/todo-app:latest")
+            stage('pre-production'){
+                openshift.tag("todo-app-int/todo-app:latest todo-app-prod/todo-app:latest")
+            }
         }
     }
 }
