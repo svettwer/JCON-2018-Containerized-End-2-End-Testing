@@ -6,13 +6,16 @@ function help() {
     echo "Parameters:"
     echo "  DOCKER_USERNAME: Dockerhub user with access to taconsol"
     echo "  DOCKER_PASSWORD: Password of the dockerhub user"
+    echo "  SAKULI_LICENSE: Sakuli license file"
 }
 
 DOCKER_USERNAME="${1}"
 DOCKER_PASSWORD="${2}"
+SAKULI_LICENSE="${3}"
 
 [[ -z "${DOCKER_USERNAME}" ]] && echo "ERROR: DOCKER_USERNAME is empty" && help  && exit
 [[ -z "${DOCKER_PASSWORD}" ]] && echo "ERROR: DOCKER_PASSWORD is empty" && help && exit
+[[ -z "${SAKULI_LICENSE}" ]] && echo "ERROR: SAKULI_LICENSE is empty" && help && exit
 
 oc login -u developer -p whateverYourPasswordWouldBe
 
@@ -37,6 +40,8 @@ oc import-image sakuli-s2i \
     --confirm \
     --scheduled=true \
     --all=true
+oc create secret generic sakuli-license \
+    --from-literal=license=${SAKULI_LICENSE}
 
 oc policy add-role-to-user edit system:serviceaccount:todo-app-dev:jenkins -n todo-app-int
 oc policy add-role-to-user edit system:serviceaccount:todo-app-dev:jenkins -n todo-app-prod

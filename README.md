@@ -22,6 +22,7 @@ depending the ip address that has been assigned to your cluster. I recommend a s
 replace for `192.168.99.109` to the ip delivered by the command `minishift ip`
 
 ### Enterprise features
-This repository uses Sakuli Enterprise features such as Monitoring forwarder, Docker images and S2I Build.
-To setup this project, a valid Sakuli licence have to be placed in a secret named `sakuli-licence` within the 
-`todo-app-int` namespace.  
+This sample project uses Sakuli enterprise features such as monitoring forwarder, Docker images and S2I builds.
+To setup this project, a valid Sakuli license have to be placed in a secret named `sakuli-license` within the 
+`todo-app-int` namespace. In addition, access to the sakuli Docker-Hub namespace is required to use S2I builds.
+To obtain a 14 days trial license and trial access to the Docker-Hub namespace, please visit [sakuli.io](https://sakuli.io/enterprise/). 

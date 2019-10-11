@@ -75,8 +75,8 @@ objects:
             - name: "SAKULI_LICENSE_KEY"
               valueFrom:
                 secretKeyRef:
-                  name: sakuli-licence
-                  key: licence
+                  name: sakuli-license
+                  key: license
       triggers:
         - imageChange: {}
           type: ImageChange
