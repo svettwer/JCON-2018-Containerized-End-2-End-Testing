@@ -7,12 +7,17 @@
   <name>Citrus Demo:: Todo App</name>
   <version>1.2.0</version>
 
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>2.1.9.RELEASE</version>
+  </parent>
+
   <properties>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <spring.boot.version>1.5.10.RELEASE</spring.boot.version>
     <slf4j.version>1.7.25</slf4j.version>
     <application.name>todo-demo-app</application.name>
   </properties>
@@ -26,33 +31,13 @@
   </licenses>
 
   <build>
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <targetPath>${project.build.directory}/classes</targetPath>
-      </resource>
-    </resources>
-    
     <plugins>
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
-        <version>${spring.boot.version}</version>
       </plugin>
     </plugins>
   </build>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-dependencies</artifactId>
-        <version>${spring.boot.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
 
   <dependencies>
     <!-- System Under Test dependencies -->
@@ -62,17 +47,7 @@
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-mustache</artifactId>
-    </dependency>
-
-
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
     </dependency>
 
     <dependency>

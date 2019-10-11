@@ -18,9 +18,7 @@ package com.consol.citrus.samples.todolist.model;
 
 import javax.xml.bind.annotation.*;
 
-/**
- * @author Christoph Deppisch
- */
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
         "cid",

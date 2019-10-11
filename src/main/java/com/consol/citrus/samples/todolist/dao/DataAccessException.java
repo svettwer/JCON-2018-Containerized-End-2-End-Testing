@@ -16,9 +16,7 @@
 
 package com.consol.citrus.samples.todolist.dao;
 
-/**
- * @author Christoph Deppisch
- */
+
 public class DataAccessException extends RuntimeException {
 
     public DataAccessException() {

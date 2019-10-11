@@ -19,9 +19,7 @@ package com.consol.citrus.samples.todolist.model;
 import javax.xml.bind.annotation.*;
 import java.util.UUID;
 
-/**
- * @author Christoph Deppisch
- */
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
         "id",

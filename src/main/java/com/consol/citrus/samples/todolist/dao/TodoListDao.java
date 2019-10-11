@@ -20,9 +20,7 @@ import com.consol.citrus.samples.todolist.model.TodoEntry;
 
 import java.util.List;
 
-/**
- * @author Christoph Deppisch
- */
+
 public interface TodoListDao {
 
     void save(TodoEntry entry);

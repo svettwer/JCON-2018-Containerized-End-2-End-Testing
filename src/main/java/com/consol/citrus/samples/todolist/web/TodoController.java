@@ -26,9 +26,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-/**
- * @author Christoph Deppisch
- */
+
 @Controller
 @RequestMapping("/api/todo")
 public class TodoController {

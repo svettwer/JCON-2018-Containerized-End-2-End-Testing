@@ -26,9 +26,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * @author Christoph Deppisch
- */
+
 @Controller
 @RequestMapping("/api/todolist")
 public class TodoListController {

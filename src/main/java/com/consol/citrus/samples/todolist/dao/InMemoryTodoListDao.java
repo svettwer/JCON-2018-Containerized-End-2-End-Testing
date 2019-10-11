@@ -21,9 +21,7 @@ import com.consol.citrus.samples.todolist.model.TodoEntry;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/**
- * @author Christoph Deppisch
- */
+
 public class InMemoryTodoListDao implements TodoListDao {
 
     /** In memory storage */
