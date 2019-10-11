@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Configuration;
  * @author Christoph Deppisch
  */
 @Configuration
-@ConditionalOnProperty(prefix = "todo.persistence", value = "type", havingValue = "in_memory", matchIfMissing = true)
 public class InMemoryApplicationConfig {
 
     @Bean
