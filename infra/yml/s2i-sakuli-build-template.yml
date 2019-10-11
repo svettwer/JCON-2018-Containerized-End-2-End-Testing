@@ -113,7 +113,7 @@ objects:
         application: ${IMAGE}
       name: ${IMAGE}
     spec:
-      host: ${IMAGE}.192.168.99.101.nip.io
+      host: ${IMAGE}.192.168.99.110.nip.io
       to:
         name: ${IMAGE}
       port:
