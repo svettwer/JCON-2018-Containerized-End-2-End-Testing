@@ -24,7 +24,7 @@
 
         await _highlight(_submit("Add"), 100);
         await _click(_submit("Add"));
-        await testCase.endOfStep("Add todo entry", 30);
+        await testCase.endOfStep("Add todo entry");
 
         //open print preview
         await env.type("p", Key.CTRL);
@@ -36,13 +36,13 @@
         await env.paste(pdfFilePath);
         await env.type(Key.ENTER);
         await env.sleep(2);
-        await testCase.endOfStep("Create backup of todo entry", 30);
+        await testCase.endOfStep("Create backup of todo entry");
 
         //Complete entry
         await _highlight(_checkbox("complete"), 100);
         await _click(_checkbox("complete"));
         await env.sleep(1);
-        await testCase.endOfStep("Complete todo entry", 30);
+        await testCase.endOfStep("Complete todo entry");
 
         //Delete entry
         await _highlight(_span("x"), 100);

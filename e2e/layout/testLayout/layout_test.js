@@ -12,7 +12,7 @@
         await _highlight(_label("Description"), 100);
         await _highlight(_textarea("description"), 100);
         await _highlight(_submit("Add"), 100);
-        await testCase.endOfStep("Test todo page layout", 30);
+        await testCase.endOfStep("Test todo page layout");
 
     } catch (e) {
         testCase.handleException(e);
