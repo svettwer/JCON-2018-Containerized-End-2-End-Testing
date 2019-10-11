@@ -2,7 +2,7 @@
     var testCase = new TestCase();
 
     try {
-        await _navigateTo("http://todo-app-int.192.168.99.109.nip.io/todolist");
+        await _navigateTo("http://todo-app-int.192.168.99.110.nip.io/todolist");
         //Check laylout
         await _highlight(_heading1("TODO list"));
         await _highlight(_list("list-group"));

@@ -53,4 +53,4 @@ parameters:
   displayName: Repository url
   description: The URL of the source repository
   required: true
-  value: http://gogs.192.168.99.109.nip.io/sven/todo-app.git
+  value: http://gogs.192.168.99.110.nip.io/sven/todo-app.git
