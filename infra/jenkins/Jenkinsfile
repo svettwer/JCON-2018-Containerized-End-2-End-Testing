@@ -4,7 +4,7 @@ stage('dev') {
         openshift.withCluster() {
             openshift.withProject( "todo-app-dev" ) {
                 buildTodoApp()
-                deployTodoApp("todo-app-dev.192.168.99.108.nip.io")
+                deployTodoApp("todo-app-dev.192.168.99.109.nip.io")
 
                 openshift.tag("todo-app-dev/todo-app:latest todo-app-int/todo-app:latest")
             }
@@ -25,7 +25,7 @@ node{
             }
 
             stage('deploy-to-int'){
-                deployTodoApp("todo-app-int.192.168.99.108.nip.io")
+                deployTodoApp("todo-app-int.192.168.99.109.nip.io")
             }
 
             stage('run-e2e-tests'){
@@ -50,7 +50,7 @@ stage('prod') {
     node{
         openshift.withCluster() {
             openshift.withProject( "todo-app-prod" ) {
-                deployTodoApp("todo-app-prod.192.168.99.108.nip.io")
+                deployTodoApp("todo-app-prod.192.168.99.109.nip.io")
             }
         }
     }
@@ -76,7 +76,7 @@ private void deployTodoApp(String routeUrl) {
 private Object startE2ETestBuild(def buildName, def contextDir) {
     def buildTemplate = openshift.process("-f", "infra/yml/s2i-sakuli-build-template.yml",
             "-p", "IMAGE=" + buildName,
-            "-p", "TESTSUITE_REPOSITORY_URL=http://gogs.192.168.99.108.nip.io/sven/todo-app.git",
+            "-p", "TESTSUITE_REPOSITORY_URL=http://gogs.192.168.99.109.nip.io/sven/todo-app.git",
             "-p", "TESTSUITE_CONTEXT_DIR="+ contextDir)
     openshift.apply(buildTemplate)
     return openshift.startBuild(buildName)
